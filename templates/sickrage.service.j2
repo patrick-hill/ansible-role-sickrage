@@ -7,8 +7,8 @@ Description=SickRage Daemon
 
 [Service]
 Type=forking
-User={{ stack_user }}
-Group={{ stack_user_group }}
+User={{ sickrage_user }}
+Group={{ sickrage_group }}
 ExecStart=/usr/bin/python {{ sickrage_install_dir }}/SickBeard.py --daemon --datadir={{ sickrage_config_dir }} --config={{ sickrage_config_dir }}/sickrage_config.ini
 GuessMainPID=no
 

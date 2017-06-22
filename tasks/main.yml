@@ -6,10 +6,18 @@
 
 - name: CentOS Install
   include: "install.yml"
-  when:
-    - ansible_distribution == 'CentOS'
-    - not check_installed.stat.exists
+  when: not check_installed.stat.exists
 
 - name: Configure Backups
   include: "backups.yml"
   when: sickrage_backups_enabled
+
+- name: Update
+  git:
+    repo: "{{ sickrage_repo }}"
+    dest: "{{ sickrage_install_dir }}"
+    version: master
+    update: yes
+  notify:
+    - restart sickrage
+  when: sickrage_allow_updates

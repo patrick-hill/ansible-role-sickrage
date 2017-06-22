@@ -1,6 +1,23 @@
 ---
 
-- name: Install Requirements
+- name: Create Group
+  group:
+    name: "{{ sickrage_group }}"
+    system: no
+    state: present 
+  become: true
+
+- name: Create User
+  user:
+    name: "{{ sickrage_user }}"
+    group: "{{ sickrage_group }}"
+    state: present
+    system: no
+    createhome: no
+    shell: /bin/false
+  become: true
+
+- name: Install Dependencies
   yum:
     pkg: "{{ item }}"
     state: installed
@@ -9,9 +26,24 @@
     - python-setproctitle
   become: true
     
-- name: Install Dependencies w/ pip
-  command: pip install pyopenssl
+- name: Install PIP Dependencies
+  pip:
+    name: pyopenssl
+    state: latest
   become: true
+
+- name: Create Required Dirs
+  file:
+    path: "{{ item }}"
+    owner: "{{ sickrage_user }}"
+    group: "{{ sickrage_group }}"
+    recurse: yes
+    state: directory
+    mode: '0755'
+  become: true
+  with_items:
+    - "{{ sickrage_install_dir }}"
+    - "{{ sickrage_config_dir }}"
 
 - name: Clone repo from GitHub
   git:
@@ -20,32 +52,34 @@
     version: master
   become: true
 
-- name: Create data dir
-  file:
-    path: "{{ sickrage_config_dir }}"
-    owner: "{{ sickrage_user }}"
-    group: "{{ sickrage_group }}"
-    recurse: yes
-    state: directory
-    mode: '0755'
-  become: true
+- block:
 
+    - name: Get files from backup_target
+      find:
+        paths: "{{ sickrage_backup_target }}"
+      register: found_files
+
+    - name: Get latest backup file
+      set_fact:
+        __sickrage_restore_file: "{{ found_files.files | sort(attribute='mtime',reverse=true) | first  }}"
+
+    - name: Set Fact for restore_file
+      set_fact:
+        sickrage_restore_file: "{{ __sickrage_restore_file.path }}"
+
+  when:
+    - sickrage_restore_from_backups
+    
 - name: Restore Backup --> Extract archive
   unarchive:
     src: "{{ sickrage_restore_file }}"
     dest: "{{ sickrage_config_dir }}"
     copy: no
-  become: true
-  when: sickrage_restore_file is defined
-
-- name: Set dir owner
-  file: 
-    path: "{{ sickrage_install_dir }}"
     owner: "{{ sickrage_user }}"
     group: "{{ sickrage_group }}"
-    recurse: yes
-    state: directory
     mode: '0755'
+  become: yes
+  when: sickrage_restore_file is defined
 
 - name: Enable port on firewall
   command: "{{ item }}"
