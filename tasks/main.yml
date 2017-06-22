@@ -12,12 +12,24 @@
   include: "backups.yml"
   when: sickrage_backups_enabled
 
-- name: Update
-  git:
-    repo: "{{ sickrage_repo }}"
-    dest: "{{ sickrage_install_dir }}"
-    version: master
-    update: yes
-  notify:
-    - restart sickrage
+- block:
+
+    - name: Update
+      git:
+        repo: "{{ sickrage_repo }}"
+        dest: "{{ sickrage_install_dir }}"
+        version: master
+        update: yes
+      ignore_errors: true
+
+    - name: Take Ownership of Git Repo
+      file:
+        path: "{{ sickrage_install_dir }}"
+        owner: "{{ sickrage_user }}"
+        group: "{{ sickrage_group }}"
+        recurse: true
+      become: true
+      notify:
+        - restart sickrage
+
   when: sickrage_allow_updates

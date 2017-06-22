@@ -24,12 +24,19 @@
   with_items:
     - python-cheetah
     - python-setproctitle
+    - gcc
+    - python-devel
+    - openssl-devel
   become: true
     
 - name: Install PIP Dependencies
   pip:
-    name: pyopenssl
+    name: "{{ item }}"
     state: latest
+  with_items:
+    - setuptools
+    - pyconfig
+    - pyopenssl
   become: true
 
 - name: Create Required Dirs
@@ -39,17 +46,26 @@
     group: "{{ sickrage_group }}"
     recurse: yes
     state: directory
-    mode: '0755'
-  become: true
+    mode: '0644'
   with_items:
     - "{{ sickrage_install_dir }}"
     - "{{ sickrage_config_dir }}"
+  become: true
 
 - name: Clone repo from GitHub
   git:
     repo: "{{ sickrage_repo }}"
     dest: "{{ sickrage_install_dir }}"
     version: master
+  become: true
+
+- name: Take Ownership of Git Repo
+  file:
+    path: "{{ sickrage_install_dir }}"
+    owner: "{{ sickrage_user }}"
+    group: "{{ sickrage_group }}"
+    recurse: true
+    mode: '0755'
   become: true
 
 - block:
@@ -99,7 +115,7 @@
     mode: '0644'
   become: true
 
-- name:     Enable service
+- name: Enable service
   service:
     name: sickrage.service
     enabled: yes
