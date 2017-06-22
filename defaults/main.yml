@@ -10,6 +10,8 @@ sickrage_repo: https://github.com/SickRage/SickRage.git
 
 sickrage_allow_updates: true
 
+sickrage_firewall_enabled: false
+
 sickrage_restore_from_backups: false
 sickrage_restore_file: ''
 

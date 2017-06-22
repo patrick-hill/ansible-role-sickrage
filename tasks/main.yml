@@ -8,9 +8,8 @@
   include: "install.yml"
   when:
     - ansible_distribution == 'CentOS'
-    - check_installed.stat.exists == False
+    - not check_installed.stat.exists
 
 - name: Configure Backups
   include: "backups.yml"
   when: sickrage_backups_enabled
-  
