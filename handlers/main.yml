@@ -1,2 +1,18 @@
 ---
 # handlers file for ansible-role-sickrage
+
+- name: sickrage restart
+  service:
+    name: sickrage
+    state: restarted
+  become: true
+
+- name: sickrage start
+  service:
+    name: sickrage
+    state: started
+
+- name: sickrage stop
+  service:
+    name: sickrage
+    state: stopped
