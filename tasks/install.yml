@@ -74,12 +74,12 @@
   unarchive:
     src: "{{ sickrage_restore_file }}"
     dest: "{{ sickrage_config_dir }}"
-    copy: no
     owner: "{{ sickrage_user }}"
     group: "{{ sickrage_group }}"
+    remote_src: true
     mode: '0755'
   become: yes
-  when: sickrage_restore_file is defined
+  when: sickrage_restore_file is defined and sickrage_restore_file|default("") != ""
 
 - name: Enable port on firewall
   command: "{{ item }}"

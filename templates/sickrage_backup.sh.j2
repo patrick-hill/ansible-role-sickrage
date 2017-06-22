@@ -3,11 +3,18 @@
 # Script is used to backup sensitive files to a compressed file
 
 archive_command="{{ sickrage_backup_command }}"
+archive_command_args={{ sickrage_backup_command_args }}
 backup_filename={{ sickrage_backup_filename }}
 backup_dir={{ sickrage_config_dir }}
 backup_source={{ sickrage_backup_sources }}
 backup_target={{ sickrage_backup_target }}
+backup_excludes="{{ sab_backup_excludes }}"
 
 cd $backup_dir
-$archive_command $backup_target/$backup_filename $backup_source
+cmd="$archive_command $backup_excludes $archive_command_args $backup_target/$backup_filename $backup_source"
+echo "Command is: $cmd"
+eval $cmd
 
+
+echo 'Done'
+exit 0

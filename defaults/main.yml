@@ -18,7 +18,9 @@ sickrage_restore_file: ''
 # Backup Script
 sickrage_backups_enabled: true
 sickrage_backup_script_dir: "/opt/scripts"
-sickrage_backup_command: tar -cpzf
-sickrage_backup_filename: sickrage-`date \+%Y\%m\%d-%T`.tar.gz
+sickrage_backup_command: 'GZIP=-9 tar'
+sickrage_backup_command_args: '-cpzf'
+sickrage_backup_filename: sickrage-`date \+%Y-\%m-\%d__\%H-\%M-\%S`.tar.gz
 sickrage_backup_sources: "*"
 sickrage_backup_target: "/_backups/sickrage"
+sab_backup_excludes:    "--exclude=backup --exclude=Logs"
