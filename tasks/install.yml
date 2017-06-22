@@ -46,7 +46,7 @@
     group: "{{ sickrage_group }}"
     recurse: yes
     state: directory
-    mode: '0644'
+    mode: '0755'
   with_items:
     - "{{ sickrage_install_dir }}"
     - "{{ sickrage_config_dir }}"
