@@ -27,6 +27,11 @@ Including an example of how to use your role (for instance, with variables passe
       roles:
          - { role: username.rolename, x: 42 }
 
+TODO
+----
+Add post-processing script so HDD can sleep when not needed
+Ref: https://github.com/SickRage/SickRage/wiki/NZBtoMedia
+
 License
 -------
 
