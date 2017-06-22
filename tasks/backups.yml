@@ -1,0 +1,42 @@
+---
+
+- name: Stat backup target
+  stat: path={{ sickrage_backup_target }}
+  register: backup_dir
+
+- name: Create backup dir
+  file:
+    path: "{{ sickrage_backup_target }}"
+    state: directory
+    owner: root
+    group: root
+  when: not backup_dir.stat.exists
+
+- name: Stat backup script dir
+  stat: path={{ sickrage_backup_script_dir }}
+  register: backup_script_dir
+
+- name: Create backup script dir
+  file:
+    path: "{{ sickrage_backup_script_dir }}"
+    state: directory
+    owner: root
+    group: root
+  when: not backup_script_dir.stat.exists
+
+- name: Create backup script
+  template:
+    src: sickrage_backup.sh.j2
+    dest: "{{ sickrage_backup_script_dir }}/sickrage_backup.sh"
+    owner: root
+    group: root
+    mode: "a+x"
+
+- name: Create cron backup
+  cron:
+    name: "SickRage Backup"
+    hour: "04"
+    minute: "20"
+    user: "root"
+    job: "{{ sickrage_backup_script_dir }}/sickrage_backup.sh"
+    state: present

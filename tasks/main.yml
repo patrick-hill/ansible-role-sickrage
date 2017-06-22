@@ -2,7 +2,15 @@
 - name: Check if installed
   stat: path=/apps/sickrage
   register: check_installed
+  changed_when: not check_installed.stat.exists
 
 - name: CentOS Install
-  include: "centos.yml"
-  when: ansible_distribution == 'CentOS' and check_installed.stat.exists == False
+  include: "install.yml"
+  when:
+    - ansible_distribution == 'CentOS'
+    - check_installed.stat.exists == False
+
+- name: Configure Backups
+  include: "backups.yml"
+  when: sickrage_backups_enabled
+  

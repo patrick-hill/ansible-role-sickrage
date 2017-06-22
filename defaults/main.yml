@@ -1,12 +1,22 @@
 ---
-sickrage_install_dir: "{{ install_dir }}/sickrage"
-sickrage_config_dir: "{{ install_dir }}/data/.sickrage"
+
+sickrage_user:  'sickrage'
+sickrage_group: 'sickrage'
+
+sickrage_install_dir: "/opt/sickrage"
+sickrage_config_dir: "/opt/data/.sickrage"
 
 sickrage_repo: https://github.com/SickRage/SickRage.git
 
+sickrage_allow_updates: true
+
+sickrage_restore_from_backups: false
+sickrage_restore_file: ''
+
 # Backup Script
-sickrage_backup_script_dir: "{{ install_dir }}/_backups/scritps"
+sickrage_backups_enabled: true
+sickrage_backup_script_dir: "/opt/scripts"
 sickrage_backup_command: tar -cpzf
 sickrage_backup_filename: sickrage-`date \+%Y\%m\%d-%T`.tar.gz
 sickrage_backup_sources: "*"
-sickrage_backup_target: "{{ install_dir }}/_backups"
+sickrage_backup_target: "/_backups/sickrage"
